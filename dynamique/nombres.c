@@ -9,7 +9,7 @@ char *get_string(char *prompt);
 bool check_string_entier(char *string);
 bool check_string_reel(char *string);
 bool check_strlen(char *string);
-void read(char *string, int n, bool exclude_zero);
+void read(char *string, int n);
 void entier_to_text(char *entier);
 char **read_numbers(char *file_path);
 void reel_to_text(char *string);
@@ -51,6 +51,7 @@ int main()
 		} while (check_string_reel(input) || check_strlen(input));
 		reel_to_text(input);
 	}
+	printf("\n");
 }
 
 void reel_to_text(char *string)
@@ -84,10 +85,10 @@ void reel_to_text(char *string)
 		{
 			if (zeros == 1)
 			{
-				printf("z\x82ro ");
+				printf("zéro ");
 			} else {
 				printf("%s ", nombres[zeros]);
-				printf("z\x82ros ");
+				printf("zéros ");
 			}
 		}
 
@@ -108,6 +109,13 @@ void reel_to_text(char *string)
 // convertir les chiffres au mots
 void entier_to_text(char *entier)
 {
+	// Le cas special de 0
+	if (!strcmp(entier, "0"))
+	{
+		printf("%s", nombres[0]);
+		return;
+	}
+
 	// afficher "moins" si le premier charactere est '-'
 	if (entier[0] == '-')
 	{
@@ -120,7 +128,7 @@ void entier_to_text(char *entier)
 	int j = (len - 1)/ 3;
 	while (i < len && j >= 0)
 	{
-		read(entier + i, (len - i) % 3, j == 0);
+		read(entier + i, (len - i) % 3);
 		if (j != 0)
 		{
 			printf(" %s ", units[j--]);
@@ -161,7 +169,7 @@ bool check_string_reel(char *string)
 		{
 			vigrule_counte += 1;
 		} 
-		if (string[i] > '9' || string[i] < 0 || vigrule_counte > 1)
+		if (string[i] > '9' || string[i] < '0' || vigrule_counte > 1)
 		{
 			printf("Reel non valide\n");
 			return true;
@@ -180,7 +188,7 @@ bool check_string_entier(char *string)
 
 	for (i = 0; i < strlen(string); i++)
 	{
-		if (string[i] > '9' || string[i] < 0)
+		if (string[i] > '9' || string[i] < '0')
 		{
 			printf("Entier non valide\n");
 			return true;
@@ -201,7 +209,8 @@ bool check_strlen(char *string)
 }
 
 // n <= 3
-void read(char *string, int n, bool exclude_zero)
+// n <= 3
+void read(char *string, int n)
 {
 	n = n == 0 ? 3 : n;
 	char buffer[3];
@@ -213,12 +222,10 @@ void read(char *string, int n, bool exclude_zero)
 	buffer[i] = '\0';
 
 	int entier = atoi(buffer);
-	if (entier == 0 && exclude_zero)
+	if (entier != 0)
 	{
-		return;
-	} else {
 		printf("%s", nombres[entier]);
-	}
+	}	
 }
 
 
