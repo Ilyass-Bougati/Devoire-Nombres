@@ -50,6 +50,7 @@ int main()
 		} while (check_string_reel(input) || check_strlen(input));
 		reel_to_text(input);
 	}
+	printf("\n");
 }
 
 
