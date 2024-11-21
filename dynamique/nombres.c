@@ -232,32 +232,37 @@ void read(char *string, int n)
 char **read_numbers(char *file_path)
 {
 	FILE *fptr = fopen(file_path, "r");
-	char **nombres = (char **) malloc(sizeof(char *));
-	char *line;
-	int i = 0;
+	char **nombres = NULL;
+	char *line = NULL; 
+	char character;
+	int i = 0, j = 0;
 
-	if (fptr != NULL)
+	if (fptr == NULL)
 	{
-		while (true)
-		{
-			line = (char *) malloc(sizeof(char)*100);
-			if (!fgets(line, 100*sizeof(char), fptr))
-			{
-				break;
-			}
-			nombres = (char **) realloc(nombres, (i+1)*sizeof(char *));
-			// removing the \n 
-			for (int j = 0; line[j] != '\0'; j++)
-			{
-				if (line[j] == '\n')
-				{
-					line[j] = '\0';
-				}
-			}
-			
-			nombres[i++] = line;
-		}
+		printf("File couldn't be opened");
+		exit(1);
 	}
+
+	while ((character = fgetc(fptr)) != EOF) {
+		if (character == '\n')
+		{
+			// adding the null character at the end of the line
+			line = (char *) realloc(line, (j + 1) * sizeof(char));
+			line[j] = '\0';
+
+			// getting to the next line
+			nombres = (char **) realloc(nombres, (i + 1) * sizeof(char*));
+			nombres[i++] = line;
+
+			// creating a new line
+			line = NULL;
+			j = 0;
+		} else {
+			// adding a character to the line
+			line = (char *) realloc(line, (j + 1) * sizeof(char));
+			line[j++] = character;
+		}
+    }
 
 	return nombres;
 }
