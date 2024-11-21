@@ -8,11 +8,11 @@
 char *get_string(char *prompt);
 bool check_string_entier(char *string);
 bool check_string_reel(char *string);
-bool check_strlen(char *string);
 void read(char *string, int n);
 void entier_to_text(char *entier);
 char **read_numbers(char *file_path);
 void reel_to_text(char *string);
+bool is_real(char *string);
 
 char *units[] = {
 	"cent",
@@ -22,34 +22,27 @@ char *units[] = {
 };
 
 char **nombres;
+bool negative;
+
 int main()
 {
 	nombres = read_numbers("nombres.txt");
 	char *input;
 	int choix;
 
-	printf("Choisi si tu veux saisir un entier ou un reel :\n");
-	printf("	1 - Entier\n");
-	printf("	2 - Reel\n");
 	do {
-		printf("> ");
-		scanf("%d", &choix);
-		getchar();
-	} while (choix != 1 && choix != 2);
-	
+		input = get_string("Entrer un nombre : ");
+	} while (check_string_reel(input));
 
-	if (choix == 1)
+	bool is_reel = is_real(input);
+	printf("%s est un %s\n", input, is_reel ? "reel" : "entier");
+
+	if (is_real)
 	{
-		do {
-			input = get_string("Entrer un Entier : ");
-		} while (check_string_entier(input) || check_strlen(input));
-		entier_to_text(input);
-	} else if (choix == 2)
-	{
-		do {
-			input = get_string("Entrer un Reel : ");
-		} while (check_string_reel(input) || check_strlen(input));
 		reel_to_text(input);
+	} else
+	{
+		entier_to_text(input);
 	}
 	printf("\n");
 }
@@ -72,6 +65,12 @@ void reel_to_text(char *string)
 	// afficher la partie fractionnaire
 	if (character == '.')
 	{
+		// check if the comma is the first character
+		if (i == 1 + negative)
+		{
+			printf("zéro");
+		}
+
 		printf(" virgule ");
 		// le nombre de zeros avant le virgule
 		int zeros = 0;
@@ -161,17 +160,23 @@ bool check_string_reel(char *string)
 	// take into account the minus sign
 	if (string[0] == '-')
 	{
+		negative = true;
 		string++;
 	}
 
 	// checking for comma in as the first or last element of the number
-	if (string[0] == '.' || string[strlen(string) - 1] == '.')
+	if (string[strlen(string) - 1] == '.')
 	{
-		printf("Reel non valide\n");
-		return true;
+		string[strlen(string) - 1] = '\0';
 	}
 
 	int i, vigrule_counte = 0;
+
+	if (strlen(string) > 12)
+	{
+		printf("la taille maximale est 12\n");
+		return true;
+	}
 
 	// checking for non numerique characters and 2+ commas
 	for (i = 0; i < strlen(string); i++)
@@ -195,6 +200,7 @@ bool check_string_entier(char *string)
 	int i;
 	if (string[0] == '-')
 	{
+		negative = true;
 		string++;
 	}
 
@@ -205,17 +211,6 @@ bool check_string_entier(char *string)
 			printf("Entier non valide\n");
 			return true;
 		}
-	}
-	return false;
-}
-
-// verifier que la taille de entier est inferieur a 13
-bool check_strlen(char *string)
-{
-	if (strlen(string) > 12)
-	{
-		printf("la taille maximale est 12\n");
-		return true;
 	}
 	return false;
 }
@@ -239,7 +234,6 @@ void read(char *string, int n)
 		printf("%s", nombres[entier]);
 	}	
 }
-
 
 char **read_numbers(char *file_path)
 {
@@ -277,4 +271,25 @@ char **read_numbers(char *file_path)
     }
 
 	return nombres;
+}
+
+bool is_real(char *string)
+{
+	// checking for comma
+	bool found_comma = false;
+	for (int i = 0; string[i] != '\0'; i++)
+	{
+		if (string[i] == '.')
+		{
+			found_comma = true;
+			continue;
+		}
+		if (string[i] != '0' & found_comma)
+		{
+			// if the program reaches this point then the number is real
+			return true;
+		}
+	}
+
+	return false;
 }
