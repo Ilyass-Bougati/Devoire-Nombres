@@ -225,7 +225,7 @@ bool check_strlen(char *string)
 void read(char *string, int n)
 {
 	n = n == 0 ? 3 : n;
-	char buffer[3];
+	char buffer[4];
 	int i;
 	for (i = 0; i < n; i++)
 	{
