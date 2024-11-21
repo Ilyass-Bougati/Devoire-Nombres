@@ -157,19 +157,31 @@ char *get_string(char *prompt)
 // verifer qu'une chaine de characters peut etre convertir a un reel
 bool check_string_reel(char *string)
 {
-	int i, vigrule_counte = 0;
+	
+	// take into account the minus sign
 	if (string[0] == '-')
 	{
 		string++;
 	}
 
+	// checking for comma in as the first or last element of the number
+	if (string[0] == '.' || string[strlen(string) - 1] == '.')
+	{
+		printf("Reel non valide\n");
+		return true;
+	}
+
+	int i, vigrule_counte = 0;
+
+	// checking for non numerique characters and 2+ commas
 	for (i = 0; i < strlen(string); i++)
 	{
 		if (string[i] == '.')
 		{
 			vigrule_counte += 1;
+			continue;
 		} 
-		if (string[i] > '9' || string[i] < '0' || vigrule_counte > 1)
+		if ((string[i] > '9' || string[i] < '0') || vigrule_counte > 1)
 		{
 			printf("Reel non valide\n");
 			return true;
