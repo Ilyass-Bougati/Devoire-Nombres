@@ -29,6 +29,8 @@ int main()
 	// Reading the text file
 	nombres = read_numbers("nombres.txt");
 	char *input;
+	
+	
 
 	// Taking user input
 	do {
@@ -40,71 +42,63 @@ int main()
 	printf("%s est un %s\n", input, is_reel ? "reel" : "entier");
 
 	// Printing the number to the screen
-	if (is_real)
+	if (is_reel)
 	{
 		reel_to_text(input);
 	} else
 	{
 		entier_to_text(input);
 	}
+
 	printf("\n");
 }
 
 void reel_to_text(char *string)
 {
-	char character, *partie_fract, *partie_entiere;
+	char character, *partie_fract;
 	int i = 0, j = 0;
 	
 	// afficher la partie entier
-	partie_entiere = (char *) malloc(sizeof(char));
-	while ((character = string[i]) != '.' && character != '\0')
-    {
-        partie_entiere[i++] = character;
-        partie_entiere = (char *) realloc(partie_entiere, (i + 1) * sizeof(char));
-    }
-	partie_entiere[i++] = '\0';
-	entier_to_text(partie_entiere);
-
-	// afficher la partie fractionnaire
-	if (character == '.')
+	for (int i = 0; string[i] != '\0'; i++)
 	{
-		// check if the comma is the first character
-		if (i == 1 + negative)
+		if (string[i] == '.')
 		{
-			printf("zéro");
+			string[i] = '\0';
+			partie_fract = string + i + 1;
+			break;
 		}
-
-		printf(" virgule ");
-		// le nombre de zeros avant le virgule
-		int zeros = 0;
-		while (string[i] == '0')
-		{
-			zeros++;
-			i++;
-		}
-
-		if (zeros != 0)
-		{
-			if (zeros == 1)
-			{
-				printf("zéro ");
-			} else {
-				printf("%s ", nombres[zeros]);
-				printf("zéros ");
-			}
-		}
-
-		partie_fract = (char *) malloc(sizeof(char));
-		while ((character = string[i]) != '\0')
-		{
-			partie_fract[j++] = character;
-			partie_fract = (char *) realloc(partie_fract, (j + 1) * sizeof(char));
-			i++;
-		}
-		partie_fract[j] = '\0';
-		
-		entier_to_text(partie_fract);
 	}
+	
+	entier_to_text(string);
+
+
+	// check if the comma is the first character
+	if (i == 1 + negative)
+	{
+		printf("zéro");
+	}
+
+	printf(" virgule ");
+	// le nombre de zeros avant le virgule
+	int zeros = 0;
+	while (string[i] == '0')
+	{
+		zeros++;
+		i++;
+	}
+
+	if (zeros != 0)
+	{
+		if (zeros == 1)
+		{
+			printf("zéro ");
+		} else {
+			printf("%s ", nombres[zeros]);
+			printf("zéros ");
+		}
+	}
+	
+	entier_to_text(partie_fract);
 }
 
 
@@ -257,7 +251,7 @@ char **read_numbers(char *file_path)
 		{
 			// adding the null character at the end of the line
 			line = (char *) realloc(line, (j + 1) * sizeof(char));
-			line[j] = '\0';
+			line[j - 1] = '\0';
 
 			// getting to the next line
 			nombres = (char **) realloc(nombres, (i + 1) * sizeof(char*));
