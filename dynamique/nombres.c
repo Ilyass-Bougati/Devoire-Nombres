@@ -26,17 +26,20 @@ bool negative;
 
 int main()
 {
+	// Reading the text file
 	nombres = read_numbers("nombres.txt");
 	char *input;
-	int choix;
 
+	// Taking user input
 	do {
 		input = get_string("Entrer un nombre : ");
 	} while (check_string_reel(input));
 
+	// Checking if the provided input is real
 	bool is_reel = is_real(input);
 	printf("%s est un %s\n", input, is_reel ? "reel" : "entier");
 
+	// Printing the number to the screen
 	if (is_real)
 	{
 		reel_to_text(input);
